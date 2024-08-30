@@ -1,6 +1,8 @@
 package app
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
 	"fmt"
 
 	"github.com/mynameismaxz/acme2kong/config"
@@ -23,14 +25,24 @@ func New(l *logger.Logger, conf *config.Config) *App {
 func (a *App) Run() error {
 	a.log.Info("acme2kong is running")
 
-	// test section
-	acmeClient := acme.NewClient("https://acme-staging-v02.api.letsencrypt.org/directory", a.cfg.DomainName, a.cfg.RegistrationEmail, a.log)
-	// check nil
+	// TODO: implement the logic to check that have certificate in the path before generate a new certificate
+	privKey, err := rsa.GenerateKey(rand.Reader, 4096)
+	if err != nil {
+		return err
+	}
+
+	userProfile := &acme.User{
+		Email:        a.cfg.RegistrationEmail,
+		Registration: nil,
+		Key:          privKey,
+	}
+
+	acmeClient := acme.NewClient(userProfile, a.cfg.ChallengeProvider, a.log)
 	if acmeClient == nil {
 		return fmt.Errorf("failed to create acme client")
 	}
 
-	if err := acmeClient.Register(); err != nil {
+	if err := acmeClient.GenerateNewCertificate(); err != nil {
 		return err
 	}
 
