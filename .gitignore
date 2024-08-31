@@ -24,4 +24,7 @@
 # Go workspace file
 go.work
 
+# Certificated generated
+cert
+
 # End of https://www.toptal.com/developers/gitignore/api/go
