@@ -9,7 +9,7 @@ var HTTPClient = &http.Client{
 	Timeout: 5 * time.Second,
 }
 
-func Dorequest(req *http.Request) (*http.Response, error) {
+func DoRequest(req *http.Request) (*http.Response, error) {
 
 	resp, err := HTTPClient.Do(req)
 	if err != nil {

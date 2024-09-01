@@ -53,12 +53,14 @@ func (k *Kong) UpdateCertificate(cert, privateKey []byte) error {
 	// http request to kong post
 	client, err := http.NewRequest(http.MethodPost, endPoint, bytes.NewBuffer(certJSON))
 	if err != nil {
+		k.logger.Error("Error creating request: %v", err)
 		return err
 	}
 	client.Header.Set("Content-Type", "application/json")
 
-	resp, err := httpclient.Dorequest(client)
+	resp, err := httpclient.DoRequest(client)
 	if err != nil {
+		k.logger.Error("Error doing request: %v", err)
 		return err
 	}
 
@@ -67,5 +69,6 @@ func (k *Kong) UpdateCertificate(cert, privateKey []byte) error {
 		return errors.New("bad request")
 	}
 
+	k.logger.Info("Certificate updated successfully")
 	return nil
 }
