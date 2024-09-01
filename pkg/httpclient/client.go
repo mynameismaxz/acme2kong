@@ -10,7 +10,6 @@ var HTTPClient = &http.Client{
 }
 
 func DoRequest(req *http.Request) (*http.Response, error) {
-
 	resp, err := HTTPClient.Do(req)
 	if err != nil {
 		return nil, err

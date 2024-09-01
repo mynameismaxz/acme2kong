@@ -1,13 +1,14 @@
 package acme
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
 	"github.com/go-acme/lego/v4/certificate"
 	"github.com/go-acme/lego/v4/challenge/dns01"
 	"github.com/go-acme/lego/v4/lego"
-	"github.com/go-acme/lego/v4/providers/dns"
+	"github.com/go-acme/lego/v4/providers/dns/cloudflare"
 	"github.com/go-acme/lego/v4/registration"
 	"github.com/mynameismaxz/acme2kong/pkg/logger"
 )
@@ -49,7 +50,7 @@ func NewClient(user *User, provider string, domainName []string, certPath string
 // It returns an error if the certificate generation fails.
 func (ac *ACME) GenerateNewCertificate() error {
 	// create provider
-	provider, err := dns.NewDNSChallengeProviderByName("cloudflare")
+	provider, err := cloudflare.NewDNSProvider()
 	if err != nil {
 		return err
 	}
@@ -93,9 +94,9 @@ func (ac *ACME) GenerateNewCertificate() error {
 	return nil
 }
 
-// TODO: implement RenewCertificate
-func (ac *ACME) RenewCertificate() error {
-	return nil
+// RenewCertificate renews the certificate using the ACME client.
+func (ac *ACME) RenewCertificate(cr *CertResource) error {
+	return errors.New("not implemented")
 }
 
 // Save certificate to disk
@@ -112,6 +113,12 @@ func (ac *ACME) saveCertificate(cert *certificate.Resource, path string) error {
 
 	// save the issuer certificate
 	if err := os.WriteFile(fmt.Sprintf("%s/issuer.crt", path), cert.IssuerCertificate, 0644); err != nil {
+		return err
+	}
+
+	// save the cert stage to disk
+	result := ConvertToCertResource(cert).toBytes()
+	if err := os.WriteFile(fmt.Sprintf("%s/cert_resource.json", path), result, 0644); err != nil {
 		return err
 	}
 

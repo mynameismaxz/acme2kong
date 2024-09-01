@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"path"
+	"net/url"
 
 	"github.com/mynameismaxz/acme2kong/pkg/httpclient"
 	"github.com/mynameismaxz/acme2kong/pkg/logger"
@@ -37,9 +37,10 @@ func New(endpoint string, domain []string, log *logger.Logger) (*Kong, error) {
 }
 
 func (k *Kong) UpdateCertificate(cert, privateKey []byte) error {
-
-	endPoint := path.Clean(path.Join(k.Endpoint, certificates))
-	k.DomainName = []string{"test.mymacz.com"}
+	endPoint, err := url.JoinPath(k.Endpoint, certificates)
+	if err != nil {
+		return err
+	}
 
 	certJSON, err := json.Marshal(Certificate{
 		Cert: string(cert),
