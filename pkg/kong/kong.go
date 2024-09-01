@@ -6,18 +6,14 @@ import (
 	"errors"
 	"net/http"
 	"path"
-	"time"
 
+	"github.com/mynameismaxz/acme2kong/pkg/httpclient"
 	"github.com/mynameismaxz/acme2kong/pkg/logger"
 )
 
 const (
 	certificates = "certificates"
 )
-
-var HTTPClient = &http.Client{
-	Timeout: 5 * time.Second,
-}
 
 type Kong struct {
 	Endpoint   string
@@ -57,12 +53,14 @@ func (k *Kong) UpdateCertificate(cert, privateKey []byte) error {
 	// http request to kong post
 	client, err := http.NewRequest(http.MethodPost, endPoint, bytes.NewBuffer(certJSON))
 	if err != nil {
+		k.logger.Error("Error creating request: %v", err)
 		return err
 	}
 	client.Header.Set("Content-Type", "application/json")
 
-	resp, err := k.HTTPDo(client)
+	resp, err := httpclient.DoRequest(client)
 	if err != nil {
+		k.logger.Error("Error doing request: %v", err)
 		return err
 	}
 
@@ -71,15 +69,6 @@ func (k *Kong) UpdateCertificate(cert, privateKey []byte) error {
 		return errors.New("bad request")
 	}
 
+	k.logger.Info("Certificate updated successfully")
 	return nil
-}
-
-func (k *Kong) HTTPDo(req *http.Request) (*http.Response, error) {
-
-	resp, err := HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, nil
 }
