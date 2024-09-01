@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/mynameismaxz/acme2kong/pkg/httpRequest"
+	"github.com/mynameismaxz/acme2kong/pkg/httpclient"
 	"github.com/mynameismaxz/acme2kong/pkg/logger"
 )
 
@@ -57,8 +57,7 @@ func (k *Kong) UpdateCertificate(cert, privateKey []byte) error {
 	}
 	client.Header.Set("Content-Type", "application/json")
 
-	// resp, err := k.HTTPDo(client)
-	resp, err := httpRequest.HTTPDo(client)
+	resp, err := httpclient.Dorequest(client)
 	if err != nil {
 		return err
 	}

@@ -1,4 +1,4 @@
-package httpRequest
+package httpclient
 
 import (
 	"net/http"
@@ -9,7 +9,7 @@ var HTTPClient = &http.Client{
 	Timeout: 5 * time.Second,
 }
 
-func HTTPDo(req *http.Request) (*http.Response, error) {
+func Dorequest(req *http.Request) (*http.Response, error) {
 
 	resp, err := HTTPClient.Do(req)
 	if err != nil {
