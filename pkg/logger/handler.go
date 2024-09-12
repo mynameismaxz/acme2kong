@@ -34,7 +34,7 @@ func (h *JSONHandler) Handle(ctx context.Context, r slog.Record) error {
 	// Build the log message structure
 	logMsg := map[string]interface{}{
 		"level": r.Level.String(),
-		"date":  time.Now().Format("2006-01-02 15:04:05"),
+		"date":  time.Now().Format(time.DateTime),
 		"msg":   r.Message,
 	}
 
