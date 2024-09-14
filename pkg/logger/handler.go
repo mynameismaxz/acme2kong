@@ -11,10 +11,10 @@ import (
 
 // JSONHandler is a custom handler that formats logs in JSON and writes to multiple outputs.
 type JSONHandler struct {
-	mu     sync.Mutex  // Ensures thread safety for concurrent logging
 	writer *os.File    // Write to stdout
 	attrs  []slog.Attr // Attributes for structured logging
 	groups []string    // Groups for nested attributes
+	mu     sync.Mutex  // Ensures thread safety for concurrent logging
 }
 
 // NewJSONHandler initializes and returns a new JSONHandler instance.
