@@ -16,10 +16,9 @@ const (
 )
 
 type Kong struct {
+	logger     *logger.Logger
 	Endpoint   string
 	DomainName []string
-
-	logger *logger.Logger
 }
 
 type Certificate struct {
